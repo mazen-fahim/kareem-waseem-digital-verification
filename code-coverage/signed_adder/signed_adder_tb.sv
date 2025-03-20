@@ -1,10 +1,12 @@
 module signed_adder_tb;
-  reg clk, reset;
-  reg signed [3:0] A, B;
 
-  wire signed [4:0] C;
 
-  reg signed  [4:0] expected_sum;
+  bit clk, reset;
+  bit signed [3:0] A, B;
+
+  logic signed [4:0] C;
+
+  reg signed   [4:0] expected_sum;
   integer error_count, correct_count;
 
   localparam MAXPOS = 7, ZERO = 0, MAXNEG = -8;
@@ -53,7 +55,6 @@ module signed_adder_tb;
 
   task static check_result;
     input signed [4:0] expected_result;
-
     @(negedge clk);
     if (expected_result !== C) begin
       error_count++;
