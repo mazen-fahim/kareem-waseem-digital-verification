@@ -114,6 +114,52 @@ package alsu_pkg;
       }
     }
 
+
+    covergroup alsu_cg @(posedge clk);
+      A_cp_1: coverpoint A {
+        bins A_data_0 = {ZERO};
+        bins A_data_max = {MAXPOS};
+        bins A_data_min = {MAXNEG};
+        bins A_data_default = default;
+      }
+      A_cp_2: coverpoint A iff (red_op_A) {bins A_data_walkingones[] = walking_ones;}
+
+      B_cp_1: coverpoint A {
+        bins B_data_0 = {ZERO};
+        bins B_data_max = {MAXPOS};
+        bins B_data_min = {MAXNEG};
+        bins B_data_default = default;
+      }
+      B_cp_2: coverpoint B iff (red_op_B & ~red_op_A) {bins A_data_walkingones[] = walking_ones;}
+
+      OPCODE_cp: coverpoint opcode {
+        bins Bins_shift[] = {SHIFT, ROTATE};
+        bins Bins_arith[] = {ADD, MULT};
+        bins Bins_bitwise[] = {OR, XOR};
+        illegal_bins Bins_invalid = {INVALID_1, INVALID_2};
+        bins Bins_trans = (0 => 1 => 2 => 3 => 4 => 5);
+      }
+    endgroup
+
+
+    // we have 6 opcodes that we need to randomize under the following
+    // constraints
+    // 1. Each one has a valid opcode (one of the six possibilities)
+    // 2. Each one is unique
+    rand opcode_e arr[6];
+    constraint arr_c {
+      unique {arr};  //each element of the array will be unique
+      foreach (arr[i]) {arr[i] inside {OR, XOR, ADD, MULT, SHIFT, ROTATE};}
+    }
+
+
+
+
+
+    function new();
+      alsu_cg = new();
+    endfunction
+
   endclass
 
 endpackage
