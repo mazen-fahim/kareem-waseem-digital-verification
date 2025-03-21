@@ -1,7 +1,3 @@
-DESIGN_MODULE_NAME = counter
-TEST_BENCH_MODULE_NAME = $(DESIGN_MODULE_NAME)_tb
-DESIGN_FILES = *.v
-TEST_FILES = *.sv
 
 #DESIGN_SRCS = 
 #TEST_BENCH_SRCS =
@@ -40,6 +36,11 @@ TEST_FILES = *.sv
 
 # TODO:: FIX when running make twice it redoes all rules again even if no file changed!
 # 		Modify rule targets to be actual file names instead of phony names
+#
+DESIGN_MODULE_NAME = counter
+TEST_BENCH_MODULE_NAME = $(DESIGN_MODULE_NAME)_tb
+DESIGN_FILES = *.v
+TEST_FILES = *.sv
 
 .PHONY: dbg cc
 
@@ -88,5 +89,5 @@ work:
 	vlib work
 
 clean:
-	rm -rf work transcript *.wlf *.ucdb coverage_rpt.txt
+	rm -rf work transcript *.wlf *.ucdb *.txt
 

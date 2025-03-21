@@ -1,6 +1,6 @@
-DESIGN_MODULE_NAME = alu_seq
+DESIGN_MODULE_NAME = alsu
 TEST_BENCH_MODULE_NAME = $(DESIGN_MODULE_NAME)_tb
-DESIGN_FILES = *.sv
+DESIGN_FILES = *.v
 TEST_FILES = *.sv
 
 #DESIGN_SRCS = 
@@ -45,6 +45,10 @@ TEST_FILES = *.sv
 
 dbg: simulate_dbg
 
+# launch the gui with coverage information
+cc-gui: simulate_cc_gui
+
+# get the coverage report wihout launching the gui 
 cc : simulate_cc 
 	vcover report -details -annotate -all -output code_coverage_rpt.txt $(TEST_BENCH_MODULE_NAME).ucdb
 
@@ -57,12 +61,16 @@ simulate_dbg : optimize_dbg
 	"add wave *;\
 	run -all;"
 
+simulate_cc_gui : optimize_cc
+	vsim -gui covver -coverage -do \
+	"run -all;\
+	coverage save -du $(DESIGN_MODULE_NAME) $(TEST_BENCH_MODULE_NAME).ucdb -onexit;\
+	coverage exclude -du $(DESIGN_MODULE_NAME) -togglenode rst;"
+
 simulate_cc : optimize_cc
 	vsim -c covver -coverage -do \
 	"run -all;\
 	coverage save -du $(DESIGN_MODULE_NAME) $(TEST_BENCH_MODULE_NAME).ucdb -onexit;\
-	coverage exclude -src alu_seq.sv -scope /alu_seq_tb/DUT -line 39 -code b;\
-	coverage exclude -src alu_seq.sv -scope /alu_seq_tb/DUT -line 39 -code s;\
 	coverage exclude -du $(DESIGN_MODULE_NAME) -togglenode rst;\
 	quit"
 
@@ -90,5 +98,5 @@ work:
 	vlib work
 
 clean:
-	rm -rf work transcript *.wlf *.ucdb *.txt
+	rm -rf work transcript *.wlf *.ucdb coverage_rpt.txt
 
